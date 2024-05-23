@@ -1,1 +1,1 @@
-git 
+[![Build status](https://ci.appveyor.com/api/projects/status/idgb1rjm7fsan7mg?svg=true)](https://ci.appveyor.com/project/marinaolivekey/aqapatterns)
