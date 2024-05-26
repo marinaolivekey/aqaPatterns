@@ -76,6 +76,49 @@ public class DateChangeTest {
                 .shouldHave(exactText("Встреча успешно запланирована на " + firstMeetingDate))
                 .shouldBe(visible);
     }
+
+    @Test
+    @DisplayName("Should Show Existing Meeting Notification")
+    public void ShouldShowExistingMeetingNotification() {
+        var validUser = DataGenerator.Registration.generateUser("ru");
+        var daysToAddForFirstMeeting = 4;
+        var firstMeetingDate = DataGenerator.generateDate(daysToAddForFirstMeeting);
+
+        $("[data-test-id=city] input").setValue(validUser.getCity());
+        $("[data-test-id=date] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $("[data-test-id=date] input").setValue(firstMeetingDate);
+        $("[data-test-id=name] input").setValue(validUser.getName());
+        $("[data-test-id=phone] input").setValue(validUser.getPhone());
+        $("[data-test-id=agreement]").click();
+        $(byText("Запланировать")).click();
+        $(byText("Успешно!")).shouldBe(Condition.visible, Duration.ofSeconds(15));
+        $("[data-test-id='success-notification'] .notification__content")
+                .shouldHave(exactText("Встреча успешно запланирована на " + firstMeetingDate))
+                .shouldBe(visible);
+        $(byText("Запланировать")).click();
+        $("[data-test-id='success-notification'] .notification__content")
+                .shouldHave(exactText("Встреча уже успешно запланирована на " + firstMeetingDate))
+                .shouldBe(visible);
+    }
+
+    @Test
+    @DisplayName("Should Show Invalid Notification if Phone Number Not Starts With +7")
+    public void ShouldShowInvalidNotificationIfPhoneNotStartsWith7() {
+        var validUser = DataGenerator.Registration.generateUser("ru");
+        var daysToAddForFirstMeeting = 4;
+        var firstMeetingDate = DataGenerator.generateDate(daysToAddForFirstMeeting);
+
+        $("[data-test-id=city] input").setValue(validUser.getCity());
+        $("[data-test-id=date] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $("[data-test-id=date] input").setValue(firstMeetingDate);
+        $("[data-test-id=name] input").setValue(validUser.getName());
+        $("[data-test-id=phone] input").setValue("+89001234567");
+        $("[data-test-id=agreement]").click();
+        $(byText("Запланировать")).click();
+        $("[data-test-id='success-notification'] .input__sub")
+                .shouldHave(exactText("Телефон должен начинаться с +7"))
+                .shouldBe(visible);
+    }
 }
 
 /*
